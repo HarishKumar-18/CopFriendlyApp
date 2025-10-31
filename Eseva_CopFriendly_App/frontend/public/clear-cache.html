@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clear Cache - CopFriendly App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #1a202c;
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .subtitle {
+            color: #718096;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .status {
+            background: #f7fafc;
+            border-left: 4px solid #4299e1;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .status.success {
+            border-left-color: #48bb78;
+            background: #f0fff4;
+        }
+        
+        .status h3 {
+            color: #2d3748;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        
+        .status p {
+            color: #4a5568;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button.secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .instructions {
+            background: #edf2f7;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .instructions h3 {
+            color: #2d3748;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+        
+        .instructions ol {
+            margin-left: 20px;
+        }
+        
+        .instructions li {
+            color: #4a5568;
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+        
+        .instructions code {
+            background: #cbd5e0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        
+        .footer {
+            text-align: center;
+            color: #a0aec0;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+        
+        .icon {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .spinning {
+            display: inline-block;
+            animation: spin 2s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">🔄</div>
+        <h1>Clear Authentication Cache</h1>
+        <p class="subtitle">CopFriendly ESeva Portal</p>
+        
+        <div class="status" id="status">
+            <h3>⚠️ Cache Status</h3>
+            <p id="statusText">You are seeing cached login data. Click below to clear and start fresh.</p>
+        </div>
+        
+        <div class="button-group">
+            <button onclick="clearCache()">
+                🗑️ Clear All Cache & Logout
+            </button>
+            <button class="secondary" onclick="goToLogin()">
+                🔐 Go to Login Page
+            </button>
+            <button class="secondary" onclick="hardRefresh()">
+                ♻️ Hard Refresh Browser
+            </button>
+        </div>
+        
+        <div class="instructions">
+            <h3>📋 Manual Instructions (if buttons don't work):</h3>
+            <ol>
+                <li>Press <code>F12</code> to open Developer Tools</li>
+                <li>Go to <strong>Application</strong> tab (Chrome) or <strong>Storage</strong> tab (Firefox)</li>
+                <li>Click on <strong>Local Storage</strong> → <code>http://localhost:5175</code></li>
+                <li>Delete all items (especially <code>user</code> and <code>token</code>)</li>
+                <li>Press <code>Ctrl+Shift+R</code> to hard refresh</li>
+            </ol>
+        </div>
+        
+        <div class="footer">
+            CopFriendly ESeva © 2025 | Virtusa
+        </div>
+    </div>
+    
+    <script>
+        function clearCache() {
+            const statusDiv = document.getElementById('status');
+            const statusText = document.getElementById('statusText');
+            
+            // Clear localStorage
+            localStorage.clear();
+            
+            // Clear sessionStorage
+            sessionStorage.clear();
+            
+            // Update status
+            statusDiv.classList.remove('success');
+            statusDiv.innerHTML = `
+                <h3><span class="spinning">🔄</span> Clearing cache...</h3>
+                <p>Please wait...</p>
+            `;
+            
+            setTimeout(() => {
+                statusDiv.classList.add('success');
+                statusDiv.innerHTML = `
+                    <h3>✅ Cache Cleared Successfully!</h3>
+                    <p>All authentication data has been removed. You will be redirected to the login page in 2 seconds...</p>
+                `;
+                
+                setTimeout(() => {
+                    window.location.href = 'http://localhost:5175';
+                }, 2000);
+            }, 1000);
+        }
+        
+        function goToLogin() {
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.href = 'http://localhost:5175/login';
+        }
+        
+        function hardRefresh() {
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.reload(true);
+        }
+        
+        // Check current cache status
+        window.onload = function() {
+            const token = localStorage.getItem('token');
+            const user = localStorage.getItem('user');
+            const statusDiv = document.getElementById('status');
+            const statusText = document.getElementById('statusText');
+            
+            if (token || user) {
+                statusText.innerHTML = `
+                    <strong>Cached data found:</strong><br>
+                    ${token ? '• Authentication token stored<br>' : ''}
+                    ${user ? '• User profile stored<br>' : ''}
+                    Click the button above to clear this data.
+                `;
+            } else {
+                statusDiv.classList.add('success');
+                statusDiv.innerHTML = `
+                    <h3>✅ No Cache Found</h3>
+                    <p>Your browser cache is clean. You can proceed to the login page.</p>
+                `;
+            }
+        };
+    </script>
+</body>
+</html>
